@@ -6,8 +6,8 @@ import java.rmi.RemoteException;
 /**
  * Created by Scalman on 20/09/16.
  */
-public interface Agreements extends Remote {
+public interface Client_Agreement extends Remote {
 
-    double calcPower(double x, int n) throws RemoteException;
 
+    void invoke_reciveMessage(String msg)throws RemoteException;
 }

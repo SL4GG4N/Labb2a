@@ -17,7 +17,7 @@ public class Main {
             Registry bogjavel = LocateRegistry.createRegistry(5001);
             RemoteObjectInvocation rm = new RemoteObjectInvocation();
             // Register the object in the RMI registry
-            bogjavel.rebind("power", rm);
+            bogjavel.rebind("server_chat", rm);
             System.out.println("Power initialized");
 
 

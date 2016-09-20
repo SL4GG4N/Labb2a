@@ -1,6 +1,7 @@
 package Server;
 
-import Interface.Agreements;
+import Interface.Client_Agreement;
+import Interface.Server_Agreement;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -10,22 +11,29 @@ import java.util.ArrayList;
 /**
  * Created by Scalman on 20/09/16.
  */
-public class RemoteObjectInvocation extends UnicastRemoteObject implements Agreements{
+public class RemoteObjectInvocation extends UnicastRemoteObject implements Server_Agreement {
 
-    private AbstractList<Agreements> clients = new ArrayList<>();
+    private AbstractList<Client_Agreement> clients = new ArrayList<>();
 
     public RemoteObjectInvocation()throws RemoteException{
         super();
     }
 
+    @Override
+    public void invoke_addClient(Client_Agreement client) throws RemoteException {
+        clients.add(client);
+    }
 
     @Override
-    public double calcPower(double x, int n) throws RemoteException {
-        int absn = Math.abs(n);
-        double res = 1;
-        for(int i = 0; i < absn; i++) {
-            res = res*x;
+    public void invoke_broadcastMessage(String msg) throws RemoteException {
+
+        for (Client_Agreement sa: clients){
+            sa.invoke_reciveMessage(msg);
         }
-        return (n >= 0 ? res : 1/res);
+    }
+
+    @Override
+    public void invoke_clientCommand() throws RemoteException {
+
     }
 }
