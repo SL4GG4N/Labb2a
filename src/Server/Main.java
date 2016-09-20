@@ -1,6 +1,8 @@
 package Server;
 
 import java.rmi.Naming;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 /**
  * Wheres the Server should be implemented.
@@ -12,9 +14,10 @@ public class Main {
 
         try {
             // Create the distributed object
+            Registry bogjavel = LocateRegistry.createRegistry(5001);
             RemoteObjectInvocation rm = new RemoteObjectInvocation();
             // Register the object in the RMI registry
-            Naming.bind("power", rm);
+            bogjavel.rebind("power", rm);
             System.out.println("Power initialized");
 
 
