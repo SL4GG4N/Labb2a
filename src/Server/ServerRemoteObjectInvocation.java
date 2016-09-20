@@ -11,11 +11,11 @@ import java.util.ArrayList;
 /**
  * Created by Scalman on 20/09/16.
  */
-public class RemoteObjectInvocation extends UnicastRemoteObject implements Server_Agreement {
+public class ServerRemoteObjectInvocation extends UnicastRemoteObject implements Server_Agreement {
 
     private AbstractList<Client_Agreement> clients = new ArrayList<>();
 
-    public RemoteObjectInvocation()throws RemoteException{
+    public ServerRemoteObjectInvocation()throws RemoteException{
         super();
     }
 

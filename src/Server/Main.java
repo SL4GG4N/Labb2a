@@ -1,6 +1,5 @@
 package Server;
 
-import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
@@ -15,7 +14,7 @@ public class Main {
         try {
             // Create the distributed object
             Registry bogjavel = LocateRegistry.createRegistry(5001);
-            RemoteObjectInvocation rm = new RemoteObjectInvocation();
+            ServerRemoteObjectInvocation rm = new ServerRemoteObjectInvocation();
             // Register the object in the RMI registry
             bogjavel.rebind("server_chat", rm);
             System.out.println("Power initialized");

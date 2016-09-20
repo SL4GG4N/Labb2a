@@ -10,4 +10,6 @@ public interface Client_Agreement extends Remote {
 
 
     void invoke_reciveMessage(String msg)throws RemoteException;
+    void invoke_setUserName(String usr_name)throws RemoteException;
+    void invoke_showCommands()throws RemoteException;
 }
