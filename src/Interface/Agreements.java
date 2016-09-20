@@ -8,5 +8,5 @@ import java.rmi.RemoteException;
  */
 public interface Agreements extends Remote {
 
-    void connect_client()throws RemoteException;
+    void connect_client(Agreements client)throws RemoteException;
 }
