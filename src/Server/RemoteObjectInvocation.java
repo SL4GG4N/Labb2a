@@ -18,10 +18,14 @@ public class RemoteObjectInvocation extends UnicastRemoteObject implements Agree
         super();
     }
 
+
     @Override
-    public void connect_client(Agreements client) throws RemoteException {
-        clients.add(client);
+    public double calcPower(double x, int n) throws RemoteException {
+        int absn = Math.abs(n);
+        double res = 1;
+        for(int i = 0; i < absn; i++) {
+            res = res*x;
+        }
+        return (n >= 0 ? res : 1/res);
     }
-
-
 }
