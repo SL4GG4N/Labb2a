@@ -16,32 +16,31 @@ public class Main {
 
 
     private static Server_Agreement agr;
+    private static ClientRemoteObjectInvocation ROI;
+
     public static void main(String[] args) {
 
-        System.out.printf("Client Started");
+        System.out.println("Client Started");
         // Get a remote reference to the distributed object from the rmi registry
-        String ip_address = "192.168.0.2";
+        String ip_address = "127.0.0.1";
 
         try {
             Registry reg = LocateRegistry.getRegistry(ip_address,5001);
             agr = (Server_Agreement)reg.lookup("server_chat");
 
 
-            ClientRemoteObjectInvocation ROI = new ClientRemoteObjectInvocation(agr,ip_address);
+            ROI = new ClientRemoteObjectInvocation(agr,ip_address);
 
             start();
 
-            /*agr.invoke_addClient(this);
-
-            double res, x = 3;
-            int n = 2;
-            res = agr.calcPower(x, n); //<--- The RMI !
-            System.out.println("" + x + "^" + n + " = " + res);*/
-
         }catch (NotBoundException e) {
+          //  System.out.println("ollon");
             e.printStackTrace();
         }catch (RemoteException e) {
+          //  System.out.println("bög");
             e.printStackTrace();
+        }finally {
+           // System.out.println("kuk");
         }
     }
 
@@ -52,9 +51,11 @@ public class Main {
         while (true){
 
             try {
+                System.out.printf("Client:  ");
                 String data = input.nextLine();
-                agr.invoke_broadcastMessage(data);
+                agr.invoke_broadcastMessage(ROI.getUser_name()+ ": " + data,ROI);
             } catch (RemoteException e) {
+                System.out.println("client could not invoke server");
                 e.printStackTrace();
             }
         }

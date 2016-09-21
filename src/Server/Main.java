@@ -13,14 +13,14 @@ public class Main {
 
         try {
             // Create the distributed object
-            Registry bogjavel = LocateRegistry.createRegistry(5001);
+            Registry connect = LocateRegistry.createRegistry(5001);
             ServerRemoteObjectInvocation rm = new ServerRemoteObjectInvocation();
             // Register the object in the RMI registry
-            bogjavel.rebind("server_chat", rm);
-            System.out.println("Power initialized");
+            connect.rebind("server_chat", rm);
 
 
         }catch (Exception e){
+            System.out.println("CRASH tack vare dig");
             e.printStackTrace();
         }
 

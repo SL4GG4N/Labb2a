@@ -11,6 +11,7 @@ import java.rmi.server.UnicastRemoteObject;
  */
 public class ClientRemoteObjectInvocation extends UnicastRemoteObject implements Client_Agreement {
 
+
     private String user_name;
 
     public ClientRemoteObjectInvocation(Server_Agreement agr,String user_name) throws RemoteException {
@@ -21,7 +22,9 @@ public class ClientRemoteObjectInvocation extends UnicastRemoteObject implements
 
     @Override
     public void invoke_reciveMessage(String msg) throws RemoteException {
-        System.out.println(msg);
+
+        System.out.println("\n"+msg);
+        System.out.printf("Client: ");
     }
 
     @Override
@@ -35,5 +38,12 @@ public class ClientRemoteObjectInvocation extends UnicastRemoteObject implements
         System.out.println("/quit");
         System.out.println("/nick <new nick name>");
         System.out.println("/help");
+    }
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
     }
 }

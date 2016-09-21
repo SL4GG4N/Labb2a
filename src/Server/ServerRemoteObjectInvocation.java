@@ -7,16 +7,18 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Scalman on 20/09/16.
  */
 public class ServerRemoteObjectInvocation extends UnicastRemoteObject implements Server_Agreement {
 
-    private AbstractList<Client_Agreement> clients = new ArrayList<>();
+    private ArrayList<Client_Agreement> clients = new ArrayList<>();
 
-    public ServerRemoteObjectInvocation()throws RemoteException{
+    public ServerRemoteObjectInvocation() throws RemoteException {
         super();
+        System.out.println("client handler created");
     }
 
     @Override
@@ -25,11 +27,24 @@ public class ServerRemoteObjectInvocation extends UnicastRemoteObject implements
     }
 
     @Override
-    public void invoke_broadcastMessage(String msg) throws RemoteException {
+    public synchronized void invoke_broadcastMessage(String msg, Client_Agreement client) {
 
-        for (Client_Agreement sa: clients){
-            sa.invoke_reciveMessage(msg);
+        if (msg.length() < 1){
+            System.out.println("Client want to send nothing");
+            return;
         }
+        Iterator iterator = clients.iterator();
+        try {
+            while (iterator.hasNext()) {
+                Client_Agreement ca = (Client_Agreement) iterator.next();
+                if (!ca.equals(client))
+                    ca.invoke_reciveMessage(msg);
+            }
+        }catch (RemoteException re){
+            System.out.println("Remove client");
+            iterator.remove();
+        }
+
     }
 
     @Override
