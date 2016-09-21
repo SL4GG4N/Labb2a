@@ -35,6 +35,7 @@ public class ServerRemoteObjectInvocation extends UnicastRemoteObject implements
         }
         Iterator iterator = clients.iterator();
         try {
+            msg = check_message(msg,client);
             while (iterator.hasNext()) {
                 Client_Agreement ca = (Client_Agreement) iterator.next();
                 if (!ca.equals(client))
@@ -45,6 +46,29 @@ public class ServerRemoteObjectInvocation extends UnicastRemoteObject implements
             iterator.remove();
         }
 
+    }
+
+    private String check_message(String msg,Client_Agreement client){
+        StringBuilder sb = new StringBuilder();
+
+        switch (msg){
+            case "/help\n":
+                sb.append("/who\n");
+                sb.append("/quit\n");
+                sb.append("/nick <new nick name>\n");
+                sb.append("/help\n");
+                break;
+            case "/quit":
+                break;
+            case "/nick":
+                break;
+            case "help":
+                break;
+            default:
+                sb.append(msg);
+        }
+
+        return sb.toString();
     }
 
     @Override

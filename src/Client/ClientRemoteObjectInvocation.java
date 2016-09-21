@@ -33,12 +33,10 @@ public class ClientRemoteObjectInvocation extends UnicastRemoteObject implements
     }
 
     @Override
-    public void invoke_showCommands() throws RemoteException {
-        System.out.println("/who");
-        System.out.println("/quit");
-        System.out.println("/nick <new nick name>");
-        System.out.println("/help");
+    public String invoke_getUserName() throws RemoteException {
+        return user_name;
     }
+
     public String getUser_name() {
         return user_name;
     }
