@@ -8,9 +8,5 @@ import java.rmi.RemoteException;
  */
 public interface Client_Agreement extends Remote {
 
-
     void invoke_reciveMessage(String msg)throws RemoteException;
-    void invoke_setUserName(String usr_name)throws RemoteException;
-    String invoke_getUserName()throws RemoteException;
-
 }

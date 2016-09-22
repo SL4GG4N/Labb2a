@@ -14,7 +14,7 @@ import java.util.Iterator;
  */
 public class ServerRemoteObjectInvocation extends UnicastRemoteObject implements Server_Agreement {
 
-    private ArrayList<Client_Agreement> clients = new ArrayList<>();
+    private ArrayList<ClientInstance> clients = new ArrayList<>();
 
     public ServerRemoteObjectInvocation() throws RemoteException {
         super();
@@ -22,53 +22,88 @@ public class ServerRemoteObjectInvocation extends UnicastRemoteObject implements
     }
 
     @Override
-    public void invoke_addClient(Client_Agreement client) throws RemoteException {
-        clients.add(client);
+    public void invoke_addClient(Client_Agreement client, String user_name) throws RemoteException {
+        clients.add(new ClientInstance(client, user_name));
+        client.invoke_reciveMessage("Welcome");
     }
 
     @Override
     public synchronized void invoke_broadcastMessage(String msg, Client_Agreement client) {
 
-        if (msg.length() < 1){
-            System.out.println("Client want to send nothing");
-            return;
-        }
-        Iterator iterator = clients.iterator();
-        try {
-            msg = check_message(msg,client);
-            while (iterator.hasNext()) {
-                Client_Agreement ca = (Client_Agreement) iterator.next();
-                if (!ca.equals(client))
-                    ca.invoke_reciveMessage(msg);
-            }
-        }catch (RemoteException re){
-            System.out.println("Remove client");
-            iterator.remove();
-        }
-
-    }
-
-    private String check_message(String msg,Client_Agreement client){
         StringBuilder sb = new StringBuilder();
 
-        switch (msg){
-            case "/help\n":
-                sb.append("/who\n");
-                sb.append("/quit\n");
-                sb.append("/nick <new nick name>\n");
-                sb.append("/help\n");
+        if (msg.length() < 1) {
+            System.out.println("Client: Send nothing");
+            return;
+        }else if (msg.contains("/nick")){
+            for (int i=6; i<msg.length(); i++)
+                sb.append(msg.charAt(i));
+            msg = "/nick";
+            System.out.println(sb.toString());
+        }
+
+        switch (msg) {
+            case "/help":
+                System.out.println("Client inside /help");
+                sb.append("/who\n/nick <new nick name>\n/quit\n/help");
+                echoMessage(client, sb);
                 break;
             case "/quit":
                 break;
             case "/nick":
+                System.out.println("Client inside /nick");
+                for (ClientInstance c: clients)
+                    if (c.client.equals(client)) {
+                        c.user_name = sb.toString();
+                        System.out.println("c: " + c.user_name);
+                    }
                 break;
-            case "help":
+            case "/who":
+                echoConnections(client,sb);
                 break;
             default:
-                sb.append(msg);
+                sendToAll(msg, client);
         }
 
-        return sb.toString();
+    }
+
+    private void echoConnections(Client_Agreement client,StringBuilder sb) {
+
+        Iterator iterator = clients.iterator();
+
+        while (iterator.hasNext()) {
+            ClientInstance ca = (ClientInstance) iterator.next();
+            if (!ca.client.equals(client))
+                sb.append(ca.user_name + "\n");
+        }
+
+        echoMessage(client,sb);
+    }
+
+    private void echoMessage(Client_Agreement client, StringBuilder sb) {
+
+        try {
+            client.invoke_reciveMessage(sb.toString());
+        } catch (RemoteException re) {
+            System.out.println("Client has disconnected");
+        }
+    }
+
+    private void sendToAll(String msg, Client_Agreement client) {
+
+        Iterator iterator = clients.iterator();
+        try {
+
+            while (iterator.hasNext()) {
+                ClientInstance ca = (ClientInstance) iterator.next();
+                if (!ca.client.equals(client))
+                    ca.client.invoke_reciveMessage(ca.user_name + ": " + msg);
+            }
+        } catch (RemoteException re) {
+            System.out.println("Remove client");
+            iterator.remove();
+        }
+
     }
 
     @Override

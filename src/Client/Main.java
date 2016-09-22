@@ -51,9 +51,8 @@ public class Main {
         while (true){
 
             try {
-                System.out.printf("Client:  ");
                 String data = input.nextLine();
-                agr.invoke_broadcastMessage(ROI.getUser_name()+ ": " + data,ROI);
+                agr.invoke_broadcastMessage(data,ROI);
             } catch (RemoteException e) {
                 System.out.println("client could not invoke server");
                 e.printStackTrace();
