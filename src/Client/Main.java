@@ -1,7 +1,6 @@
 package Client;
 
 import Interface.Server_Agreement;
-import com.sun.corba.se.spi.activation.Server;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -15,24 +14,27 @@ import java.util.Scanner;
 public class Main {
 
 
-    private static Server_Agreement agr;
-    private static ClientRemoteObjectInvocation ROI;
+    private static Server_Agreement server_chat;
+    private static ClientChat clientChat;
 
     public static void main(String[] args) {
 
         System.out.println("Client Started");
         // Get a remote reference to the distributed object from the rmi registry
         String ip_address = "127.0.0.1";
-
+        Registry reg;
         try {
-            Registry reg = LocateRegistry.getRegistry(ip_address,5001);
-            agr = (Server_Agreement)reg.lookup("server_chat");
+            reg = LocateRegistry.getRegistry(ip_address,5001);
+            server_chat = (Server_Agreement)reg.lookup("server_chat");
 
 
-            ROI = new ClientRemoteObjectInvocation(agr,ip_address);
+            clientChat = new ClientChat(server_chat,ip_address);
 
-            start();
+            clientChat.start(server_chat,clientChat);
 
+           // System.out.println("hello");
+            //reg.unbind("server_chat");
+            System.exit(1);
         }catch (NotBoundException e) {
           //  System.out.println("ollon");
             e.printStackTrace();
@@ -42,22 +44,8 @@ public class Main {
         }finally {
            // System.out.println("kuk");
         }
-    }
-
-    private static void start(){
-
-        Scanner input = new Scanner(System.in);
-
-        while (true){
-
-            try {
-                String data = input.nextLine();
-                agr.invoke_broadcastMessage(data,ROI);
-            } catch (RemoteException e) {
-                System.out.println("client could not invoke server");
-                e.printStackTrace();
-            }
-        }
 
     }
+
+
 }

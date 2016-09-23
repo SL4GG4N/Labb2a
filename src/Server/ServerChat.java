@@ -12,11 +12,11 @@ import java.util.Iterator;
 /**
  * Created by Scalman on 20/09/16.
  */
-public class ServerRemoteObjectInvocation extends UnicastRemoteObject implements Server_Agreement {
+public class ServerChat extends UnicastRemoteObject implements Server_Agreement {
 
     private ArrayList<ClientInstance> clients = new ArrayList<>();
 
-    public ServerRemoteObjectInvocation() throws RemoteException {
+    public ServerChat() throws RemoteException {
         super();
         System.out.println("client handler created");
     }
@@ -35,12 +35,13 @@ public class ServerRemoteObjectInvocation extends UnicastRemoteObject implements
         if (msg.length() < 1) {
             System.out.println("Client: Send nothing");
             return;
-        }else if (msg.contains("/nick")){
-            for (int i=6; i<msg.length(); i++)
+        } else if (msg.contains("/nick")) {
+            for (int i = 6; i < msg.length(); i++)
                 sb.append(msg.charAt(i));
             msg = "/nick";
             System.out.println(sb.toString());
         }
+        checkConnections();
 
         switch (msg) {
             case "/help":
@@ -49,17 +50,20 @@ public class ServerRemoteObjectInvocation extends UnicastRemoteObject implements
                 echoMessage(client, sb);
                 break;
             case "/quit":
+                sendToAll("Im leaving", client);
+
                 break;
             case "/nick":
                 System.out.println("Client inside /nick");
-                for (ClientInstance c: clients)
+                for (ClientInstance c : clients)
                     if (c.client.equals(client)) {
                         c.user_name = sb.toString();
                         System.out.println("c: " + c.user_name);
                     }
                 break;
             case "/who":
-                echoConnections(client,sb);
+                echoConnections(client, sb);
+               // closeClient(client);
                 break;
             default:
                 sendToAll(msg, client);
@@ -67,7 +71,23 @@ public class ServerRemoteObjectInvocation extends UnicastRemoteObject implements
 
     }
 
-    private void echoConnections(Client_Agreement client,StringBuilder sb) {
+    private void checkConnections() {
+
+        Iterator iterator = clients.iterator();
+
+        while (iterator.hasNext()) {
+            ClientInstance ca = (ClientInstance) iterator.next();
+            try {
+                ca.client.invoke_checkIfUserIsAlive();
+            } catch (RemoteException e) {
+                iterator.remove();
+                System.out.println("Dead Client");
+                //e.printStackTrace();
+            }
+        }
+    }
+
+    private void echoConnections(Client_Agreement client, StringBuilder sb) {
 
         Iterator iterator = clients.iterator();
 
@@ -77,7 +97,7 @@ public class ServerRemoteObjectInvocation extends UnicastRemoteObject implements
                 sb.append(ca.user_name + "\n");
         }
 
-        echoMessage(client,sb);
+        echoMessage(client, sb);
     }
 
     private void echoMessage(Client_Agreement client, StringBuilder sb) {
@@ -92,12 +112,17 @@ public class ServerRemoteObjectInvocation extends UnicastRemoteObject implements
     private void sendToAll(String msg, Client_Agreement client) {
 
         Iterator iterator = clients.iterator();
+        String name = "";
         try {
+            for (ClientInstance c : clients)
+                if (c.client.equals(client))
+                    name = c.user_name;
+
 
             while (iterator.hasNext()) {
                 ClientInstance ca = (ClientInstance) iterator.next();
                 if (!ca.client.equals(client))
-                    ca.client.invoke_reciveMessage(ca.user_name + ": " + msg);
+                    ca.client.invoke_reciveMessage(name + ": " + msg);
             }
         } catch (RemoteException re) {
             System.out.println("Remove client");
@@ -106,8 +131,4 @@ public class ServerRemoteObjectInvocation extends UnicastRemoteObject implements
 
     }
 
-    @Override
-    public void invoke_clientCommand() throws RemoteException {
-
-    }
 }

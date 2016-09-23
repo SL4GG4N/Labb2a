@@ -9,4 +9,6 @@ import java.rmi.RemoteException;
 public interface Client_Agreement extends Remote {
 
     void invoke_reciveMessage(String msg)throws RemoteException;
+    void invoke_checkIfUserIsAlive()throws RemoteException;
+    void invoke_closeClient()throws RemoteException;
 }

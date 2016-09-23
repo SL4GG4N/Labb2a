@@ -14,10 +14,9 @@ public class Main {
         try {
             // Create the distributed object
             Registry connect = LocateRegistry.createRegistry(5001);
-            ServerRemoteObjectInvocation rm = new ServerRemoteObjectInvocation();
+            ServerChat rm = new ServerChat();
             // Register the object in the RMI registry
             connect.rebind("server_chat", rm);
-
 
         }catch (Exception e){
             System.out.println("CRASH tack vare dig");
