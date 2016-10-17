@@ -21,7 +21,7 @@ public class Main {
 
         System.out.println("Client Started");
         // Get a remote reference to the distributed object from the rmi registry
-        String ip_address = "127.0.0.1";
+        String ip_address = "localhost";
         Registry reg;
         try {
             reg = LocateRegistry.getRegistry(ip_address,5001);
@@ -30,7 +30,7 @@ public class Main {
 
             clientChat = new ClientChat(server_chat,ip_address);
 
-            clientChat.start(server_chat,clientChat);
+            clientChat.start(server_chat);
 
            // System.out.println("hello");
             //reg.unbind("server_chat");

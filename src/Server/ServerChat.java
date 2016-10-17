@@ -33,7 +33,7 @@ public class ServerChat extends UnicastRemoteObject implements Server_Agreement 
         StringBuilder sb = new StringBuilder();
 
         if (msg.length() < 1) {
-            System.out.println("Client: Send nothing");
+            //System.out.println("Client: Send nothing");
             return;
         } else if (msg.contains("/nick")) {
             for (int i = 6; i < msg.length(); i++)

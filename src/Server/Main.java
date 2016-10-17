@@ -22,6 +22,5 @@ public class Main {
             System.out.println("CRASH tack vare dig");
             e.printStackTrace();
         }
-
     }
 }
